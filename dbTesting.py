@@ -12,7 +12,8 @@ def mysqlconnect():
     cur = conn.cursor()
 
     # Execute Query
-    cur.execute("""SELECT name FROM city
+    cur.execute("""SELECT City.name as City country.name and Country, population as Population 
+                FROM city, country WHERE city.countrycode = ountry.code
                 Limit 5""")
     output = cur.fetchall()
     
