@@ -1,0 +1,47 @@
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background-color: #f9f9f9;
+        }
+        table {
+            border-collapse: collapse;
+            width: 60%;
+            margin: auto;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h2>15 Cities that fit your criteria</h2>
+    <table>
+        <tr><th>City</th><th>Country</th><th>Population</th></tr>
+        {% for city, country, population in rows %}
+            <tr>
+                <td>{{ city }}</td>
+                <td>{{ country }}</td>
+                <td>{{ population }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
