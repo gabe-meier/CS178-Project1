@@ -12,14 +12,12 @@ def mysqlconnect():
     cur = conn.cursor()
 
     # Execute Query
-    cur.execute("""SELECT City.name as City country.name and Country, population as Population 
-                FROM city, country WHERE city.countrycode = ountry.code
-                Limit 5""")
+    cur.execute("""SELECT DISTINCT name from country ORDER BY name""")
     output = cur.fetchall()
     
     # Print Results
     for row in output:
-        print(row[0], "\t", row[1], "\t", row[2], "\t", row[3], "\t", row[4])
+        print('<option value="'+row[0]+'">'+row[0]+'</option>')
       
     # To close the connection
     conn.close()

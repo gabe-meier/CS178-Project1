@@ -1,3 +1,4 @@
+<!-- I don't know much html, so ChatGPT help me with most of this template --> 
 <html>
 <head>
     <style>
@@ -29,19 +30,69 @@
             text-align: center;
             color: #333;
         }
+        .message {
+            text-align: center;
+            color: #555;
+            font-size: 18px;
+            margin-top: 40px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
-    <h2>15 Cities that fit your criteria</h2>
-    <table>
-        <tr><th>City</th><th>Country</th><th>Population</th></tr>
-        {% for city, country, population in rows %}
+    {% if rows|length == 10 %}
+        <h2>Here's 10 Random Cities that Fit your Criteria. Refresh for More!</h2>
+        <table>
             <tr>
-                <td>{{ city }}</td>
-                <td>{{ country }}</td>
-                <td>{{ population }}</td>
+                <th>City</th>
+                <th>Country</th>
+                <th>Population</th>
+                <th>Continent</th>
+                <th>District</th>
             </tr>
-        {% endfor %}
-    </table>
+            {% for city, country, population, continent, district in rows %}
+                <tr>
+                    <td>{{ city }}</td>
+                    <td>{{ country }}</td>
+                    <td>{{ population }}</td>
+                    <td>{{ continent }}</td>
+                    <td>{{ district }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% elif rows%}
+        <h2>Here's all {{rows|length}} Cities that Fit your Criteria!</h2>
+        <table>
+            <tr>
+                <th>City</th>
+                <th>Country</th>
+                <th>Population</th>
+                <th>Continent</th>
+                <th>District</th>
+            </tr>
+            {% for city, country, population, continent, district in rows %}
+                <tr>
+                    <td>{{ city }}</td>
+                    <td>{{ country }}</td>
+                    <td>{{ population }}</td>
+                    <td>{{ continent }}</td>
+                    <td>{{ district }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <div class="message">
+            No cities match your criteria. Please try again with different filters.
+        </div>
+    {% endif %}
+    <div style="text-align:center;">
+        <a href="{{ url_for('country_form') }}" class="back-link">← Back to Country Selection</a>
+    </div>
 </body>
 </html>
