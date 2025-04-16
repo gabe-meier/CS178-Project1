@@ -1,0 +1,125 @@
+<!-- I don't know much html, so ChatGPT help me with most of this template --> 
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background-color: #f9f9f9;
+        }
+        table {
+            border-collapse: collapse;
+            width: 60%;
+            margin: auto;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .message {
+            text-align: center;
+            color: #555;
+            font-size: 18px;
+            margin-top: 40px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<!-- Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<body><div style="text-align: center;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    
+    {% if rows|length == 10 %}
+    </div>
+    </body>
+        <h2>Here's 10 Random Cities that Fit your Criteria. Refresh for More!</h2>
+        <table>
+            <tr>
+                <th>City</th>
+                <th>Population</th>
+                <th>Continent</th>
+                <th>Country</th>
+                <th>District</th>
+            </tr>
+            {% for city, country, population, continent, district in rows %}
+                <tr>
+                    <td>{{ city }}</td>
+                    <td>{{ population }}</td>
+                    <td>{{ continent }}</td>
+                    <td>{{ country }}</td>
+                    <td>{{ district }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% elif rows%}
+        <h2>Here's all the cities that fit your criteria!</h2>
+        <table>
+            <tr>
+                <th>City</th>
+                <th>Population</th>
+                <th>Continent</th>
+                <th>Country</th>
+                <th>District</th>
+            </tr>
+            {% for city, country, population, continent, district in rows %}
+                <tr>
+                    <td>{{ city }}</td>
+                    <td>{{ population }}</td>
+                    <td>{{ continent }}</td>
+                    <td>{{ country }}</td>
+                    <td>{{ district }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <div class="message">
+            No cities match your criteria. Please try again with different filters.
+        </div>
+    {% endif %}
+    <div style="text-align:center;">
+        <a href="{{ url_for('country_form',username=username)}}" class="back-link">Change city preferences</a>
+    </div>
+
+    <!-- Bootstrap JS for dismissible alerts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Auto-dismiss flash messages after 4 seconds -->
+    <script>
+    setTimeout(function() {
+        $(".alert").alert('close');
+    }, 4000);
+    </script>
+</body>
+</html>
