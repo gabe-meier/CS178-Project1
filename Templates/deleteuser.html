@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Account</title>
+    <title>Delete Account</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -89,17 +89,16 @@
         {% endwith %}
 
         <!-- Form -->
-        <h1>Create Account</h1>
-        <form action="{{ url_for('create_account') }}" method="post">
+        <h1>Delete Account</h1>
+        <form action="{{ url_for('delete_account') }}" method="post">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 
             <label for="password">Password:</label>
             <input type="text" id="password" name="password" required>
 
-            <input type="submit" value="Create Account">
+            <input type="submit" value="Delete Account">
         </form>
-        <a href="{{ url_for('login') }}" class="back-link">Log in to existing account instead</a>
         <a href="{{ url_for('hello') }}" class="back-link">← Back to home page</a>
     </div>
 

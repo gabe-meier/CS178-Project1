@@ -22,6 +22,28 @@ table = dynamodb.Table(TABLE_NAME)
 def hello():
     return render_template("home.html")
 
+@app.route('/delete_account', methods=['GET', 'POST'])
+def delete_account():
+    if request.method == 'POST':
+        # Extract form data
+        username = request.form['username']
+        password = request.form['password']
+        if dynamofunctions.user_exists(username):
+            if dynamofunctions.check_password(username, password):
+                dynamofunctions.delete_user(username)
+                flash('User Deleted Successfully!', 'success')
+                return redirect(url_for('hello'))
+            else:
+                flash('Password incorrect, try again.', 'warning')
+                return redirect(url_for('delete_account'))
+        else:
+            flash('User does not exist, try again.', 'warning')
+            return redirect(url_for('delete_account'))
+
+    else:
+        # Render the form page if the request method is GET
+        return render_template('deleteuser.html')  
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -30,8 +52,31 @@ def login():
         password = request.form['password']
         if dynamofunctions.user_exists(username):
             if dynamofunctions.check_password(username,password):
-                flash('Logged in added successfully!', 'success')
-                return redirect(url_for('country_form'))
+                try:
+                    # Check if the movie exists
+                    response = table.get_item(Key={'Username': username})  
+                    if 'Continents' not in response['Item']:
+                        pref = False
+                    else:
+                        pref = True 
+                except ClientError as e:
+                    pref = False
+                if pref:
+                    continents = dynamofunctions.get_continents(username)
+                    countries = dynamofunctions.get_countries(username)
+                    pop_range = dynamofunctions.get_pop_range(username)
+                    # Encode countries and continents as query parameters
+                    country_query = '&'.join([f"countries={urllib.parse.quote(c)}" for c in countries])
+                    continent_query = '&'.join([f"continents={urllib.parse.quote(c)}" for c in continents])
+                    pop_query = f"pop_range={pop_range}"
+
+                    # Build full query string
+                    full_query = f"{pop_query}&{country_query}&{continent_query}"
+                    flash('Logged in Successfully!', 'success')
+                    return redirect(f"/{username}/countryresults?{full_query}")
+                else:
+                    flash('Logged in Successfully!', 'success')
+                    return redirect(url_for('country_form', username=username))
             else:
                 flash('Password incorrect, try again.', 'warning')
                 return redirect(url_for('login'))
@@ -54,7 +99,7 @@ def create_account():
         else:
             dynamofunctions.create_user(username,password)
             flash('User Created Successfully!', 'success')
-            return redirect(url_for('country_form'))
+            return redirect(url_for('country_form', username=username))
 
     else:
         # Render the form page if the request method is GET
@@ -118,19 +163,22 @@ def get_city_data(min_pop, max_pop, continents=None, countries=None):
     
     return execute_query(query, params)
 
-@app.route("/countryquery", methods = ['GET'])
-def country_form():
+@app.route("/<username>/countryquery", methods = ['GET'])
+def country_form(username):
   return render_template('textbox.html', fieldname = "Country")
 
 # ChatGPT helped me create a url that changes for multiple selected countries
-@app.route("/countryquery", methods=['POST'])
-def country_form_post():
+@app.route("/<username>/countryquery", methods=['POST'])
+def country_form_post(username):
     countries = request.form.getlist('countries')
     continents = request.form.getlist('continents')
     pop_range = request.form.get('pop_range')
     if not pop_range:
-        return redirect(url_for('country_form'))
+        return redirect(url_for('country_form', username=username))
 
+    dynamofunctions.update_pop_range(username, pop_range)
+    dynamofunctions.update_countries(username, countries)
+    dynamofunctions.update_continents(username, continents)
     # Encode countries and continents as query parameters
     country_query = '&'.join([f"countries={urllib.parse.quote(c)}" for c in countries])
     continent_query = '&'.join([f"continents={urllib.parse.quote(c)}" for c in continents])
@@ -138,11 +186,11 @@ def country_form_post():
 
     # Build full query string
     full_query = f"{pop_query}&{country_query}&{continent_query}"
-    return redirect(f"/countryresults?{full_query}")
+    return redirect(f"/{username}/countryresults?{full_query}")
 
 # ChatGPT helped me figure out how to pass the list of countries into this function
-@app.route("/countryresults")
-def viewcities():
+@app.route("/<username>/countryresults")
+def viewcities(username):
     pop_range = request.args.get('pop_range')
     countries = request.args.getlist('countries')
     continents = request.args.getlist('continents')
@@ -154,7 +202,7 @@ def viewcities():
 
     rows = get_city_data(min_pop, max_pop, continents, countries)
     print(len(rows))
-    return render_template("viewdb.html", rows=rows)
+    return render_template("viewdb.html", rows=rows, username=username)
 
 
 # these two lines of code should always be the last in the file

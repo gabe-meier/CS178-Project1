@@ -92,6 +92,18 @@
                 <option value="5000000-100000000">Mega City (Over 5,000,000)</option>
             </select>
 
+
+            <label for="continents">Select Continents (only used if no countries are selected):</label>
+            <select name="continents" multiple="multiple" id="continent-select">
+                <option value="Asia">Asia</option>
+                <option value="Africa">Africa</option>
+                <option value="North America">North America</option>
+                <option value="South America">South America</option>
+                <option value="Europe">Europe</option>
+                <option value="Oceania">Oceania</option>
+                <option value="Antarctica">Antarctica</option>
+            </select>
+            
             <label for="countries">Select Countries (if none are selected, all countries will be included):</label>
             <select name="countries" multiple="multiple" id="country-select">
                 <!-- List of countries copied from dbTesting.py -->
@@ -336,20 +348,13 @@
                 <option value="Zimbabwe">Zimbabwe</option>
             </select>
 
-            <label for="continents">Select Continents (only used if no countries are selected):</label>
-            <select name="continents" multiple="multiple" id="continent-select">
-                <option value="Asia">Asia</option>
-                <option value="Africa">Africa</option>
-                <option value="North America">North America</option>
-                <option value="South America">South America</option>
-                <option value="Europe">Europe</option>
-                <option value="Oceania">Oceania</option>
-                <option value="Antarctica">Antarctica</option>
-            </select>
-
             <input type="submit" value="Search Cities">
         </form>
+        <div style="text-align:center;">
+            <a href="{{ url_for('login')}}" class="back-link">← Back to login page</a>
+        </div>
     </div>
+   
 
     <!-- JS Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

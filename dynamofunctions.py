@@ -15,16 +15,11 @@ def create_user(username,password):
         }
     )
 
-def update_pop_range(username, min_pop, max_pop):
+def update_pop_range(username, pop_range):
     table.update_item(
         Key = {"Username": username}, 
-        UpdateExpression = "SET Min_pop = :val1", 
-        ExpressionAttributeValues = {':val1': min_pop}
-    )
-    table.update_item(
-        Key = {"Username": username}, 
-        UpdateExpression = "SET Max_pop = :val1", 
-        ExpressionAttributeValues = {':val1': max_pop}
+        UpdateExpression = "SET Pop_range = :val1", 
+        ExpressionAttributeValues = {':val1': pop_range}
     )
 
 def update_countries(username, countries):
@@ -63,3 +58,21 @@ def check_password(username,password):
         return True
     else:
         return False
+
+def get_pop_range(username):
+    response = table.get_item(Key={'Username': username})
+    user = response.get("Item")
+    return user["Pop_range"]
+
+def get_countries(username):
+    response = table.get_item(Key={'Username': username})
+    user = response.get("Item")
+    return user["Countries"]
+
+def get_continents(username):
+    response = table.get_item(Key={'Username': username})
+    user = response.get("Item")
+    return user["Continents"]
+
+def delete_user(username):
+    table.delete_item(Key = {"Username": username})
