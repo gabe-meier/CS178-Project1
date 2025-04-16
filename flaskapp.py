@@ -4,9 +4,19 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import urllib.parse #ChatGPT had me install this package to make url redirecting work
 import pymysql
 import creds 
+import boto3
+from botocore.exceptions import ClientError
+import dynamofunctions
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+
+TABLE_NAME = "Users"
+
+dynamodb = boto3.resource('dynamodb', region_name="us-east-1")
+table = dynamodb.Table(TABLE_NAME)
+
+
 
 @app.route('/')
 def hello():
@@ -18,10 +28,16 @@ def login():
         # Extract form data
         username = request.form['username']
         password = request.form['password']
-        print(username,password)
-        flash('Logged in added successfully!', 'success')  # 'success' is a category; makes a green banner at the top
-        # Redirect to home page or another page upon successful submission
-        return redirect(url_for('country_form'))
+        if dynamofunctions.user_exists(username):
+            if dynamofunctions.check_password(username,password):
+                flash('Logged in added successfully!', 'success')
+                return redirect(url_for('country_form'))
+            else:
+                flash('Password incorrect, try again.', 'warning')
+                return redirect(url_for('login'))
+        else:
+            flash('Username does not exist. did you mean to create a new account?', 'warning')
+            return redirect(url_for('login'))
     else:
         # Render the form page if the request method is GET
         return render_template('login.html')
@@ -32,11 +48,14 @@ def create_account():
         # Extract form data
         username = request.form['username']
         password = request.form['password']
-        print(username,password)
-        
-        flash('User Created Successfully!', 'success')  # 'success' is a category; makes a green banner at the top
-        # Redirect to home page or another page upon successful submission
-        return redirect(url_for('country_form'))
+        if dynamofunctions.user_exists(username):
+            flash('Username already exists, try again.', 'warning')
+            return redirect(url_for('create_account'))
+        else:
+            dynamofunctions.create_user(username,password)
+            flash('User Created Successfully!', 'success')
+            return redirect(url_for('country_form'))
+
     else:
         # Render the form page if the request method is GET
         return render_template('createuser.html')  
