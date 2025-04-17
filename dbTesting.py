@@ -1,3 +1,4 @@
+# Code to test connection to SQL databse
 import pymysql
 import creds 
 
@@ -11,11 +12,12 @@ def mysqlconnect():
         )
     cur = conn.cursor()
 
-    # Execute Query
+    # Practice query to test connection
     cur.execute("""SELECT DISTINCT name from country ORDER BY name""")
     output = cur.fetchall()
     
-    # Print Results
+    # Print Results formatted like the html I needed for the country list
+    # I copied this output into the html file so I didn't have to manually type an option for each country
     for row in output:
         print('<option value="'+row[0]+'">'+row[0]+'</option>')
       
